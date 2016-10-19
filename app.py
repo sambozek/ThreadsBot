@@ -10,7 +10,7 @@ app = Flask(__name__)
 def verify():
     """ test to verify that the heroku app is functional. Return errors """
     if request.args.get("hub.mode")=='subscribe' and request.args.get("hub.challenge"):
-        if not request.args.get('hub.verify_token')== os.environ['VERIFY_TOKEN']:
+        if not request.args.get('hub.verify_token')==os.environ['VERIFY_TOKEN']:
             return "Token Mismatch", 403
         return request.args["hub.challenge"], 200
 
@@ -21,7 +21,7 @@ def verify():
 def webhook():
 
 	data = request.get_json()
-	log(data) # Maintain log for testing
+	log(data)  # Maintain testing log of interactions
 
 	if data["object"] == 'page':
 		for entry in data['entry']:
@@ -30,7 +30,7 @@ def webhook():
 				if messaging_event.get('message'):
 
 					sender_id = messaging_event['sender']['id']
-					recipient_id = messaging_event['sender']['id']
+					recipient_id = messaging_event['recipient']['id']
 					message_text = messaging_event['message']['text']
 
 					send_message(sender_id, "cheers, mate")
@@ -49,8 +49,7 @@ def webhook():
 
 def send_message(recipient_id, message_text):
 	log('Sent messge to {recipient}: {text}'.format(recipient= recipient_id, text=message_text))
+	params = {'access_token' : os.environ['PAGE_ACCESS_TOKEN']}
 
-	params = {'access_token' os.environ['PAGE_ACCESS_TOKEN']}
 
-	
 	pass
