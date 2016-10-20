@@ -50,6 +50,24 @@ def webhook():
 def send_message(recipient_id, message_text):
 	log('Sent messge to {recipient}: {text}'.format(recipient= recipient_id, text=message_text))
 	params = {'access_token' : os.environ['PAGE_ACCESS_TOKEN']}
+	headers = {'Content-Type': 'applicatoin/json'}
 
+	data = json.dumps({
+		'recipient': {'id' : recipient_id},
+		'message': {
+		'text' : message_text
+		}})
+	r = requests.post('https://graph.facebook.com/v2.6/me/messages', 
+		params=params, headers=headers, data=data)
 
+	if r.status_code != 200:
+		log(r.status_code)
+		log(r.text)
+
+def log(message):
+	print str(message)
+	sys.stdout.flush()
 	pass
+
+if __name__ == '__main__':
+	app.run(debug=True)
